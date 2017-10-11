@@ -108,7 +108,8 @@ I implemented this step in cell 13 of [T1P4.ipynb](https://github.com/RuiyeNi/Ca
 
 The code for producing the video is in [T1P4-Pipeline.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4-Pipeline.ipynb). 
 
-Here's a [link to my video result](./project_video_1.mp4)
+Here's a link to my video result:
+[![video image](https://img.youtube.com/vi/etul2D4iIOU/0.jpg)](https://youtu.be/etul2D4iIOU)
 
 ---
 
