@@ -1,6 +1,5 @@
-## Writeup Template
+## Writeup
 
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
 
 ---
 
@@ -19,12 +18,12 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/undistort_output.png "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
-[image3]: ./examples/binary_combo_example.jpg "Binary Example"
-[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
+[image1]: ./output_images/UndisortedChess.png "Undistorted Chess"
+[image2]: ./output_images/UndistoredRoad.png "Undistored Road"
+[image3]: ./output_images/BinaryImage.png "Binary Example"
+[image4]: ./output_images/PerpectiveTransform.png "Transform Example"
+[image5]: ./output_images/LanePixel.png "Lane Detection"
+[image6]: ./output_images/LanePlot.png "Lane Plot"
 [video1]: ./project_video.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
@@ -33,51 +32,43 @@ The goals / steps of this project are the following:
 
 ---
 
-### Writeup / README
-
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
-
-You're reading it!
+### Writeup
 
 ### Camera Calibration
 
 #### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
-The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
+This step was completed by code cell 2 and cell 3 in the jupyter notebook [T1P4.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb). Generally speaking, object points  `objpoints` and image points `imgpoints` are required to calculate the camera matrix and distortion coefficients. Image points are all the inner corners of a chess board in a 2D world, and objects points are the targeted locations of these inner corners in a undistored 3D world with z=0 in this application case. Twenty calibration images were used to collect `imgpoints` list using `cv2.FindChessboardCorners` . Object points `imgpoints` were replications of the same targeted points for these images. There were 3 images whose inner corners were not sucessfully detected, and were excluded from further calcualtion. Camera matrix and distorion coefficients were obtained by applying `cv2.calibrateCamera` to `objpoints` and `imgpoints`,  and the results were saved as pickle file for later use. 
 
-I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
-
-I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
-
-![alt text][image1]
+With camera matrix and distortion coefficients, an example of undistored image could be obtained with `cv2.undistort`:
+![undistored chess][image1]
 
 ### Pipeline (single images)
 
 #### 1. Provide an example of a distortion-corrected image.
 
-To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
-![alt text][image2]
+Similarly as how I undistorted the chess board image, I corrected one distored road image as follows:
+![undistorted raod][image2]
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
-
-![alt text][image3]
+Initially, I experimented with a combination of color transforms and gradients for thresholding binary image. I ended up with just using color transforms since it yielded more stable results. For the single image demo here, l channel and s channel from hls color space were used to obtain a binarized image. The code is in cell 6 and cell 7 in the jupyter notebook [T1P4.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb) 
+![binary example][image3]
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+The code performing perspective transform is in cell 8 of [T1P4.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb). The goal is to transform the source points in a pre-transformed image to the destination points of a transfomred image. Source and destination points were hardcoded in the following manner:
 
 ```python
 src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
+    [[(img_size[0] / 2) - 62, img_size[1] / 2 + 100],
+    [((img_size[0] / 6) - 20), img_size[1]],
+    [(img_size[0] * 4 / 6) + 272, img_size[1]],
+    [(img_size[0] / 2 + 65), img_size[1] / 2 + 100]])
 dst = np.float32(
     [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
+    [(img_size[0] / 4), img_size[1]-5],
+    [(img_size[0] * 3 / 4), img_size[1]-5],
     [(img_size[0] * 3 / 4), 0]])
 ```
 
@@ -85,28 +76,27 @@ This resulted in the following source and destination points:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 578, 460      | 320, 0        | 
+| 193, 720      | 320, 715      |
+| 1125, 720     | 960, 715      |
+| 705, 460      | 960, 0        |
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
-![alt text][image4]
+![trasform example][image4]
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
-
-![alt text][image5]
+Lane-line pixels were founded by detecting the locations of pixel histogram peaks of binary image using code in cell 11 of [T1P4.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb). A polynomial was fitted for left and right lane respectively using `np.polyfit` based upon detected lane pixels. Identifed lane-line pixels are in red for left lane and blue for right lane. Fitted polynomial  is in yellow:
+![lane detection][image5]
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+Radius of curvature of the lane was calculated by using fitted x and y pixels of lane lines with curvature equation. Left/right lane curvature with a smaller value was displayed as the lane curvature. The position of the vehicle with respet to the center was obtained by subtracting the middlepoint x pixel of the image from that of road space shaped by the fitted lanes. The code is in cell 10 of [T1Pr.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb)
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+I implemented this step in cell 13 of [T1P4.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb).  Here is an example of my result on a test image:
 
 ![alt text][image6]
 
@@ -116,6 +106,8 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
+The code for producing the video is in [T1P4-Pipeline.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.-Pipeline.ipynb). 
+
 Here's a [link to my video result](./project_video.mp4)
 
 ---
@@ -124,4 +116,4 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+To obtain a reasonble stable lane detection in video, I slightly modified the binary image threhsolding process by using l channel from LUV color space and s channel from hsv color space. In addition, I applied different thresholds to these two channels depending on the road condition such as whether there are shadows or the general color of the road is darker or lighter. Fitted polynomials were averaged by using one previous correctly detected frame and one current frame. Frame with detected lanes beyond a certain range was discarded. The resulted video has smooth lanes for most frames, but there are still several frames with lanes plot extending a little beyond the authentic lane lines, especiallying in the senario where there was sharp change of the road lightness and color. To make it more robust, I could try to combine multiple other thresholding methods such as gradients and use more previous frames.
