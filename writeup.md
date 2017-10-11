@@ -18,13 +18,13 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./output_images/UndisortedChess.png "Undistorted Chess"
-[image2]: ./output_images/UndistoredRoad.png "Undistored Road"
+[image1]: ./output_images/UndistortedChess.png "Undistorted Chess"
+[image2]: ./output_images/UndistortedRoad.png "Undistored Road"
 [image3]: ./output_images/BinaryImage.png "Binary Example"
-[image4]: ./output_images/PerpectiveTransform.png "Transform Example"
+[image4]: ./output_images/PersepctiveTransform.png "Transform Example"
 [image5]: ./output_images/LanePixel.png "Lane Detection"
 [image6]: ./output_images/LanePlot.png "Lane Plot"
-[video1]: ./project_video.mp4 "Video"
+[video1]: ./project_video_1.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
 
@@ -92,13 +92,13 @@ Lane-line pixels were founded by detecting the locations of pixel histogram peak
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-Radius of curvature of the lane was calculated by using fitted x and y pixels of lane lines with curvature equation. Left/right lane curvature with a smaller value was displayed as the lane curvature. The position of the vehicle with respet to the center was obtained by subtracting the middlepoint x pixel of the image from that of road space shaped by the fitted lanes. The code is in cell 10 of [T1Pr.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb)
+Radius of curvature of the lane was calculated by using fitted x and y pixels of lane lines with curvature equation. Left/right lane curvature with a smaller value was displayed as the lane curvature. The position of the vehicle with respet to the center was obtained by subtracting the middlepoint x pixel of the image from that of road space shaped by the fitted lanes. The code is in cell 10 of [T1P4.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb)
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
 I implemented this step in cell 13 of [T1P4.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.ipynb).  Here is an example of my result on a test image:
 
-![alt text][image6]
+![lane plot][image6]
 
 ---
 
@@ -106,9 +106,9 @@ I implemented this step in cell 13 of [T1P4.ipynb](https://github.com/RuiyeNi/Ca
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-The code for producing the video is in [T1P4-Pipeline.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4.-Pipeline.ipynb). 
+The code for producing the video is in [T1P4-Pipeline.ipynb](https://github.com/RuiyeNi/CarND-Term1-Project4-Advanced-Lane-Finding/blob/master/T1P4-Pipeline.ipynb). 
 
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](./project_video_1.mp4)
 
 ---
 
